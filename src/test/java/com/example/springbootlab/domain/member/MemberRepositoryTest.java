@@ -5,6 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -12,14 +15,41 @@ import static org.assertj.core.api.Assertions.assertThat;
 class MemberRepositoryTest {
     @Autowired
     MemberRepository memberRepository;
+    @Autowired
+    EntityManager em;
 
     @Test
-    public void memberCreateAndRead(){
-        Member member1 = Member.builder().username("jinseo").email("ojs@naver.com").nickname("jin").build();
-        memberRepository.save(member1);
+    public void memberCreateAndReadTest(){
+        // given
+        Member member = createMember();
+        System.out.println("------------");
+        System.out.println(member.getId());
 
-        Member findMember = memberRepository.findById(member1.getId()).orElseThrow(IllegalAccessError::new);
-        findMember.updateNickname("editNickName");
-        System.out.println(findMember.getNickname());
+        // when
+        memberRepository.save(member);
+
+        System.out.println(member.getId());
+        System.out.println(member.getCreatedDate());
+        System.out.println("-----------");
+
+        // then
+    }
+
+    private Member createMember(String email, String nickname, String username, String password) {
+        return Member.builder()
+                .email(email)
+                .nickname(nickname)
+                .username(username)
+                .password(password)
+                .build();
+    }
+
+    private Member createMember(){
+        return Member.builder()
+                .email("email")
+                .nickname("nickname")
+                .username("username")
+                .password("password")
+                .build();
     }
 }

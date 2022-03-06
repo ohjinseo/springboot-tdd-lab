@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Getter
 @NoArgsConstructor
@@ -28,6 +29,10 @@ public class Member extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
+
+    // 연관관계 주인이 아닌 테이블에서 컬럼이 생성?
+    @OneToMany(mappedBy = "member")
+    private Set<MemberRole> roles;
 
     @Builder
     public Member(String email, String password, String username, String nickname){

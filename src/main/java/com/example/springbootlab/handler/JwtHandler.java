@@ -45,5 +45,3 @@ public class JwtHandler {
         return token.substring(type.length());
     }
 }
-
-//https://kukekyakya.tistory.com/528?category=1025994

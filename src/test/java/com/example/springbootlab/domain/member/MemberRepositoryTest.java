@@ -11,6 +11,8 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,10 +20,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class MemberRepositoryTest {
+
     @Autowired
     MemberRepository memberRepository;
+
     @Autowired
     EntityManager em;
+
+    @Autowired
+    RoleRepository roleRepository;
 
     @Test
     public void memberCreateAndReadTest(){
@@ -87,6 +94,61 @@ class MemberRepositoryTest {
                 .nickname(nickname)
                 .username(username)
                 .password(password)
+                .build();
+    }
+
+    @Test
+    @Transactional
+    void memberRoleCascadePersistTest() {
+        // given
+        List<RoleType> roleTypes = List.of(RoleType.ROLE_NORMAL, RoleType.ROLE_SPECIAL_BUYER, RoleType.ROLE_ADMIN);
+        List<Role> roles = roleTypes.stream().map(roleType -> new Role(roleType)).collect(Collectors.toList());
+        roleRepository.saveAll(roles);
+
+        Member member = memberRepository.save(createMemberWithRoles(roleRepository.findAll()));
+
+        // when
+        Member foundMember = memberRepository.findById(member.getId()).orElseThrow(MemberNotFoundException::new);
+        Set<MemberRole> memberRoles = foundMember.getRoles();
+        // 영속성 컨텍스트에서 관리되고 있지 않을 시 준영속상태가 되므로 프록시 객체는 진짜 값들을 가져올 수 없는 상태에 놓임
+        // Lazy 전략의 문제점 https://somuchthings.tistory.com/140
+        // EAGER 전략일 때 왜 memberRoles를 가져오지 못하는걸까??
+
+        //System.out.println(memberRoles);
+        //System.out.println("------------");
+
+        // then
+        assertThat(memberRoles.size()).isEqualTo(roleTypes.size());
+    }
+
+    // 영속성 전이 테스트 : Member를 제거할 때 MemberRole 또한 함께 제거되는지??
+    @Test
+    @Transactional
+    void memberRoleCascadeDeleteTest(){
+        // given
+        List<RoleType> roleTypes = List.of(RoleType.ROLE_NORMAL, RoleType.ROLE_SPECIAL_BUYER, RoleType.ROLE_ADMIN);
+        List<Role> roles = roleTypes.stream().map(roleType -> new Role(roleType)).collect(Collectors.toList());
+        roleRepository.saveAll(roles);
+
+        Member member = memberRepository.save(createMemberWithRoles(roleRepository.findAll()));
+        clear();
+
+        // when
+        memberRepository.deleteById(member.getId());
+        clear();
+
+        // then
+        List<MemberRole> result = em.createQuery("select mr from MemberRole mr", MemberRole.class).getResultList();
+        assertThat(result.size()).isZero();
+    }
+
+    private Member createMemberWithRoles(List<Role> roles) {
+        return Member.builder()
+                .email("email")
+                .nickname("nickname")
+                .username("username")
+                .password("password")
+                .roles(roles)
                 .build();
     }
 

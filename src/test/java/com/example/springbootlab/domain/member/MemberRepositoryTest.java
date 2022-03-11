@@ -33,10 +33,13 @@ class MemberRepositoryTest {
     @Test
     public void memberCreateAndReadTest(){
         // given
-        Member member = createMember();
+        Member member = createMember(); // 지역변수인데도
 
         // when
-        memberRepository.save(member);
+        memberRepository.save(member); // DB에 저장
+        // 영속성 컨텍스트에는 멤버 존재 X
+        // DB 메모리에 저장됨 - 영속성 컨텍스트와는 다른 공간
+        System.out.println(member.getId());
 
         // then
         Member foundMember = memberRepository.findById(member.getId()).orElseThrow(MemberNotFoundException::new);

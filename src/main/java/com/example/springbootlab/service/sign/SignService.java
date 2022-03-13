@@ -9,7 +9,6 @@ import com.example.springbootlab.exception.MemberEmailAlreadyExistsException;
 import com.example.springbootlab.exception.MemberNicknameAlreadyExistsException;
 import com.example.springbootlab.exception.RoleNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.token.TokenService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,8 +36,10 @@ public class SignService {
         String subject = createSubject(member);
 
         String accessToken = tokenService.createAccessToken(subject);
-    }
+        String refreshToken = tokenService.createRefreshToken(subject);
 
+        return new SignInResponse(accessToken, refreshToken);
+    }
 
     // 중복 검사와 비밀번호 검사는 비즈니스 로직에서 알아야할 사항임
     // 만약 Member 본인이 알게되면 MemberRepository, PasswordEncoder 등 알아야 할 내용이 너무 많아짐

@@ -21,4 +21,8 @@ public class Response {
     public static<T> Response success(T data){
         return new Response(true, 0, new Success<T>(data));
     }
+
+    public static Response failure(int code, String msg) {
+        return new Response(false, code, new Failure(msg));
+    }
 }

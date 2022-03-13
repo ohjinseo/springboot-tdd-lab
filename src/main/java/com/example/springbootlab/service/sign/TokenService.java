@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+// 설정 값과 jwtHandler를 이용해서 accessToken과 refreshToken을 발급해주는 서비스
+
 @Service
 @RequiredArgsConstructor
 public class TokenService {

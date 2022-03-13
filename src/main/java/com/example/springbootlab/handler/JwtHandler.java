@@ -9,6 +9,7 @@ import java.util.Date;
 public class JwtHandler {
     private String type = "Bearer";
 
+    // 토큰 생성 메서드
     // Base64로 인코딩된 key 값, 토큰에 저장될 데이터 subject, 만료 기간 maxAgeSeconds
     public String createToken(String encodedKey, String subject, long maxAgeSeconds) {
         Date now = new Date();
@@ -20,6 +21,7 @@ public class JwtHandler {
                 .compact(); // 토큰 생성
     }
 
+    // subject 추출 메서드
     public String extractSubject(String encodedKey, String token) {
         return parse(encodedKey, token).getBody().getSubject();
     }

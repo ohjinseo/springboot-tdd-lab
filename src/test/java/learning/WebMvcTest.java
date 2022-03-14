@@ -31,7 +31,7 @@ public class WebMvcTest {
 
     @BeforeEach
     void beforeEach() {
-        mockMvc = MockMvcBuilders.standaloneSetup(testController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(testController).build(); // standaloneSetup : 테스트에서 사용할 컨트롤러 하나만 지정해서 MockMvc 인스턴스 생성
     }
 
     // Response 클래스 JSON 응답에 null 값이 제외되는지 테스트

@@ -108,17 +108,19 @@ class MemberRepositoryTest {
         List<Role> roles = roleTypes.stream().map(roleType -> new Role(roleType)).collect(Collectors.toList());
         roleRepository.saveAll(roles);
 
-        Member member = memberRepository.save(createMemberWithRoles(roleRepository.findAll()));
+
+        // 영속성 컨텍스트 내에서 관리되지 않을 시 roleRepository.findAll() 값을 Member의 role에 적용하고 저장하려는데,
+        // 이미 roleRepository.findall() 값은 attached 상태이므로 cascade하게 PERSIST가 되지 않아 detached entity passed to persist 오류가 발생한다
+        Member member = memberRepository.save(createMemberWithRoles(roleRepository.findAll())); 
 
         // when
         Member foundMember = memberRepository.findById(member.getId()).orElseThrow(MemberNotFoundException::new);
         Set<MemberRole> memberRoles = foundMember.getRoles();
         // 영속성 컨텍스트에서 관리되고 있지 않을 시 준영속상태가 되므로 프록시 객체는 진짜 값들을 가져올 수 없는 상태에 놓임
-        // Lazy 전략의 문제점 https://somuchthings.tistory.com/140
-        // EAGER 전략일 때 왜 memberRoles를 가져오지 못하는걸까??
+        // EAGER 전략일 때 왜 memberRoles를 가져오지 못하는걸까?? -> memberRoles가 attached 상태임
 
-        //System.out.println(memberRoles);
-        //System.out.println("------------");
+        System.out.println(memberRoles);
+        System.out.println("------------");
 
         // then
         assertThat(memberRoles.size()).isEqualTo(roleTypes.size());

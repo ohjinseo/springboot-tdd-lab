@@ -1,6 +1,7 @@
 package com.example.springbootlab.domain.member;
 
 import com.example.springbootlab.domain.BaseTimeEntity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Member extends BaseTimeEntity {
     @Id
@@ -33,6 +35,7 @@ public class Member extends BaseTimeEntity {
     private RoleType roleType;
 
     // 연관관계 주인이 아닌 테이블에서 컬럼이 생성?
+    // OneToMany default : LAZY
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<MemberRole> roles;
 

@@ -4,12 +4,15 @@ import com.example.springbootlab.domain.member.*;
 import com.example.springbootlab.exception.RoleNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.event.EventListener;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +26,8 @@ public class InitDB {
     private final PasswordEncoder passwordEncoder;
 
     // PostConstruct에서는 @Transactional과 같은 AOP가 적용되지 않는다.
-    //@PostConstruct // 빈의 생성과 의존성 주입이 끝난 뒤에 수행할 초기화 코드를 지정
+    @EventListener(ApplicationReadyEvent.class)
+    @Transactional
     public void initDB(){
         log.info("initialize database");
         initRole();

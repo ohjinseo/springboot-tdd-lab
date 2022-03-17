@@ -1,5 +1,6 @@
 package com.example.springbootlab.controller.member;
 
+import com.example.springbootlab.advice.ExceptionAdvice;
 import com.example.springbootlab.exception.MemberNotFoundException;
 import com.example.springbootlab.service.member.MemberService;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,49 +12,49 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.verify;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-class MemberControllerTest {
-    @InjectMocks MemberController memberController;
+public class MemberControllerAdviceTest {
+    @InjectMocks
+    MemberController memberController;
     @Mock
     MemberService memberService;
-
     MockMvc mockMvc;
 
     @BeforeEach
     void beforeEach(){
-        mockMvc = MockMvcBuilders.standaloneSetup(memberController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(memberController).setControllerAdvice(new ExceptionAdvice()).build();
     }
 
     @Test
-    void readTest() throws Exception{
+    void readMemberNotFoundExceptionTest() throws Exception{
         // given
-        Long id = 1L;
+        given(memberService.read(anyLong())).willThrow(MemberNotFoundException.class);
 
         // when, then
         mockMvc.perform(
-                get("/api/members/{id}", id)
-        ).andExpect(status().isOk());
-
-        verify(memberService).read(id);
+                        get("/api/members/{id}", 1L)
+                ).andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value(-1007));
     }
 
     @Test
-    void deleteTest() throws Exception{
+    void deleteMemberNotFoundExceptionTest() throws Exception{
         // given
-        Long id = 1L;
+        doThrow(MemberNotFoundException.class).when(memberService).delete(anyLong());
 
         // when, then
         mockMvc.perform(
-                delete("/api/members/{id}", id)
-        ).andExpect(status().isOk());
-        verify(memberService).delete(id);
+                delete("/api/members/{id}", 1L)
+        ).andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value(-1007));
     }
 }

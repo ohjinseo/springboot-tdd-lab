@@ -36,7 +36,7 @@ public class Member extends BaseTimeEntity {
 
     // 연관관계 주인이 아닌 테이블에서 컬럼이 생성?
     // OneToMany default : LAZY
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<MemberRole> roles;
 
     @Builder

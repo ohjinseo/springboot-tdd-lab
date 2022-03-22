@@ -1,16 +1,15 @@
 package com.example.springbootlab.service.sign;
 
 import com.example.springbootlab.domain.member.*;
+import com.example.springbootlab.dto.sign.RefreshTokenResponse;
 import com.example.springbootlab.dto.sign.SignInRequest;
 import com.example.springbootlab.dto.sign.SignInResponse;
 import com.example.springbootlab.dto.sign.SignUpRequest;
-import com.example.springbootlab.exception.LoginFailureException;
-import com.example.springbootlab.exception.MemberEmailAlreadyExistsException;
-import com.example.springbootlab.exception.MemberNicknameAlreadyExistsException;
-import com.example.springbootlab.exception.RoleNotFoundException;
+import com.example.springbootlab.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,12 +21,14 @@ public class SignService {
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
+    @Transactional
     public void signUp(SignUpRequest req){
         validateSignUpInfo(req);
         memberRepository.save(SignUpRequest.toEntity(req,
                 roleRepository.findByRoleType(RoleType.ROLE_NORMAL).orElseThrow(RoleNotFoundException::new), passwordEncoder));
     }
 
+    @Transactional(readOnly = true)
     public SignInResponse signIn(SignInRequest req){
         // email로 Member를 찾지 못하든, 비밀번호가 올바르지 않든, 동일하게 LoginFailure 예외를 던짐
         // 그 이유는 어떤 항목에 의해 로그인에 실패하였는지 모르기 위함
@@ -61,6 +62,19 @@ public class SignService {
         }
         if(memberRepository.existsByNickname(req.getNickname())){
             throw new MemberNicknameAlreadyExistsException(req.getNickname());
+        }
+    }
+
+    public RefreshTokenResponse refreshToken(String rToken) {
+        validateRefreshToken(rToken);
+        String subject = tokenService.extractRefreshTokenSubject(rToken);
+        String accessToken = tokenService.createAccessToken(subject);
+        return new RefreshTokenResponse(accessToken);
+    }
+
+    public void validateRefreshToken(String rToken) {
+        if(!tokenService.validateRefreshToken(rToken)){
+            throw new AuthenticationEntryPointException();
         }
     }
 }

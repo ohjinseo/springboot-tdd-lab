@@ -1,13 +1,11 @@
 package com.example.springbootlab.service.sign;
 
 import com.example.springbootlab.domain.member.*;
+import com.example.springbootlab.dto.sign.RefreshTokenResponse;
 import com.example.springbootlab.dto.sign.SignInRequest;
 import com.example.springbootlab.dto.sign.SignInResponse;
 import com.example.springbootlab.dto.sign.SignUpRequest;
-import com.example.springbootlab.exception.LoginFailureException;
-import com.example.springbootlab.exception.MemberEmailAlreadyExistsException;
-import com.example.springbootlab.exception.MemberNicknameAlreadyExistsException;
-import com.example.springbootlab.exception.RoleNotFoundException;
+import com.example.springbootlab.exception.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,6 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.swing.text.html.Option;
 import java.util.Optional;
 
+import static com.example.springbootlab.factory.dto.SignUpRequestFactory.createSignUpRequest;
+import static com.example.springbootlab.factory.entity.MemberFactory.createMember;
 import static org.junit.jupiter.api.Assertions.*;
 
 import static java.util.Collections.emptyList;
@@ -119,17 +119,32 @@ class SignServiceTest {
                 .isInstanceOf(LoginFailureException.class);
     }
 
+    @Test
+    void refreshTokenTest() {
+        // given
+        String refreshToken = "refreshToken";
+        String subject = "subject";
+        String accessToken = "accessToken";
+        given(tokenService.validateRefreshToken(refreshToken)).willReturn(true);
+        given(tokenService.extractRefreshTokenSubject(refreshToken)).willReturn(subject);
+        given(tokenService.createAccessToken(subject)).willReturn(accessToken);
 
-    private SignUpRequest createSignUpRequest() {
-        return new SignUpRequest("email", "password", "username", "nickname");
+        // when
+        RefreshTokenResponse res = signService.refreshToken(refreshToken);
+
+        // then
+        assertThat(res.getAccessToken()).isEqualTo(accessToken);
     }
 
-    private Member createMember() {
-        return Member.builder()
-                .email("email")
-                .password("password")
-                .username("username")
-                .nickname("nickname")
-                .roles(emptyList()).build();
+    @Test
+    void refreshTokenExceptionByInvalidTokenTest() {
+        // given
+        String refreshToken = "refreshToken";
+        given(tokenService.validateRefreshToken(refreshToken)).willReturn(false);
+
+        // when, then
+        assertThatThrownBy(() -> signService.refreshToken(refreshToken))
+                .isInstanceOf(AuthenticationEntryPointException.class);
     }
+
 }

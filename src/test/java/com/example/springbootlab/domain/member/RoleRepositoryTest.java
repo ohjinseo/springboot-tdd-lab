@@ -9,6 +9,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import static com.example.springbootlab.factory.entity.RoleFactory.createRole;
 import static org.junit.jupiter.api.Assertions.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,11 +56,6 @@ class RoleRepositoryTest {
 
         // when, then
         assertThatThrownBy(() -> roleRepository.save(createRole())).isInstanceOf(DataIntegrityViolationException.class);
-    }
-
-
-    private Role createRole() {
-        return new Role(RoleType.ROLE_NORMAL);
     }
 
     private void clear() {

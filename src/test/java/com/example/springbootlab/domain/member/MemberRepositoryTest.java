@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.example.springbootlab.factory.entity.MemberFactory.createMember;
+import static com.example.springbootlab.factory.entity.MemberFactory.createMemberWithRoles;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -91,15 +93,6 @@ class MemberRepositoryTest {
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
 
-    private Member createMember(String email, String nickname, String username, String password) {
-        return Member.builder()
-                .email(email)
-                .nickname(nickname)
-                .username(username)
-                .password(password)
-                .build();
-    }
-
     @Test
     @Transactional
     void memberRoleCascadePersistTest() {
@@ -145,25 +138,6 @@ class MemberRepositoryTest {
         // then
         List<MemberRole> result = em.createQuery("select mr from MemberRole mr", MemberRole.class).getResultList();
         assertThat(result.size()).isZero();
-    }
-
-    private Member createMemberWithRoles(List<Role> roles) {
-        return Member.builder()
-                .email("email")
-                .nickname("nickname")
-                .username("username")
-                .password("password")
-                .roles(roles)
-                .build();
-    }
-
-    private Member createMember(){
-        return Member.builder()
-                .email("email")
-                .nickname("nickname")
-                .username("username")
-                .password("password")
-                .build();
     }
 
     private void clear() {

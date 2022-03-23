@@ -29,7 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception{
         // 이미 사용자 인증 및 인가에 대한 검사가 끝나고 예외가 발생하여 redirect되는 것이기 때문에 URL 검사 무시
-        web.ignoring().mvcMatchers("/exception/**");
+        web.ignoring().mvcMatchers("/exception/**", "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**");
     }
 
 

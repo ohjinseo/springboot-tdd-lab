@@ -17,7 +17,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 
 import java.util.List;
 
-@Import(BeanValidatorPluginsConfiguration.class) // bean validation 문서화
+@Import(BeanValidatorPluginsConfiguration.class) // @Valid가 선언된 DTO 객체들의 bean validation 조건을 문서화할 수 있음
 @Configuration
 public class SwaggerConfig {
     @Bean
@@ -52,7 +52,7 @@ public class SwaggerConfig {
     }
 
     private List<SecurityReference> defaultAuth() {
-        AuthorizationScope authorizationScope = new AuthorizationScope("global", "global access");
+        AuthorizationScope authorizationScope = new AuthorizationScope("global", "global access"); // 헤더 전역화
         return List.of(new SecurityReference("Authorization", new AuthorizationScope[] {authorizationScope}));
     }
 }

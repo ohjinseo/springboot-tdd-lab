@@ -1,5 +1,6 @@
 package com.example.springbootlab.service.sign;
 
+import com.example.springbootlab.config.token.TokenHelper;
 import com.example.springbootlab.domain.member.*;
 import com.example.springbootlab.dto.sign.RefreshTokenResponse;
 import com.example.springbootlab.dto.sign.SignInRequest;
@@ -19,7 +20,8 @@ public class SignService {
     private final MemberRepository memberRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-    private final TokenService tokenService;
+    private final TokenHelper accessTokenHelper;
+    private final TokenHelper refreshTokenHelper;
 
     @Transactional
     public void signUp(SignUpRequest req){
@@ -36,8 +38,8 @@ public class SignService {
         validatePassword(req, member);
         String subject = createSubject(member);
 
-        String accessToken = tokenService.createAccessToken(subject);
-        String refreshToken = tokenService.createRefreshToken(subject);
+        String accessToken = accessTokenHelper.createToken(subject);
+        String refreshToken = refreshTokenHelper.createToken(subject);
 
         return new SignInResponse(accessToken, refreshToken);
     }
@@ -67,13 +69,13 @@ public class SignService {
 
     public RefreshTokenResponse refreshToken(String rToken) {
         validateRefreshToken(rToken);
-        String subject = tokenService.extractRefreshTokenSubject(rToken);
-        String accessToken = tokenService.createAccessToken(subject);
+        String subject = refreshTokenHelper.extractSubject(rToken);
+        String accessToken = accessTokenHelper.createToken(subject);
         return new RefreshTokenResponse(accessToken);
     }
 
     public void validateRefreshToken(String rToken) {
-        if(!tokenService.validateRefreshToken(rToken)){
+        if(!refreshTokenHelper.validate(rToken)){
             throw new AuthenticationEntryPointException();
         }
     }

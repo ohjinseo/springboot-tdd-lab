@@ -4,6 +4,7 @@ import com.example.springbootlab.config.security.CustomAccessDeniedHandler;
 import com.example.springbootlab.config.security.CustomAuthenticationEntryPoint;
 import com.example.springbootlab.config.security.CustomUserDetailsService;
 import com.example.springbootlab.config.security.JwtAuthenticationFilter;
+import com.example.springbootlab.config.token.TokenHelper;
 import com.example.springbootlab.service.sign.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity // 스프링 필터체인에 등록
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private final TokenService tokenService;
+    private final TokenHelper accessTokenHelper;
     private final CustomUserDetailsService userDetailsService;
 
 
@@ -51,7 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .and()
-                .addFilterBefore(new JwtAuthenticationFilter(tokenService, userDetailsService), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(accessTokenHelper, userDetailsService), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean

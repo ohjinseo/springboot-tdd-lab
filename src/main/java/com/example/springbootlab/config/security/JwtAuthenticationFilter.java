@@ -1,5 +1,6 @@
 package com.example.springbootlab.config.security;
 
+import com.example.springbootlab.config.token.TokenHelper;
 import com.example.springbootlab.service.sign.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,7 @@ import java.io.IOException;
 @Slf4j
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
-    private final TokenService tokenService;
+    private final TokenHelper accessTokenHelper;
     private final CustomUserDetailsService userDetailsService;
 
     @Override
@@ -33,14 +34,14 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         return ((HttpServletRequest)request).getHeader("Authorization");
     }
 
-        private boolean validateAccessToken(String token){
-            return token != null && tokenService.validateAccessToken(token);
-        }
+    private boolean validateAccessToken(String token){
+        return token != null && accessTokenHelper.validate(token);
+    }
 
-        // 토큰으로부터 찾은 사용자를 securityContext
-        private void setAccessAuthentication(String token){
-            String userId = tokenService.extractAccessTokenSubject(token);
-            CustomUserDetails userDetails = userDetailsService.loadUserByUsername(userId);
-            SecurityContextHolder.getContext().setAuthentication(new CustomAuthenticationToken(userDetails, userDetails.getAuthorities()));
-        }
+    // 토큰으로부터 찾은 사용자를 securityContext
+    private void setAccessAuthentication(String token){
+        String userId = accessTokenHelper.extractSubject(token);
+        CustomUserDetails userDetails = userDetailsService.loadUserByUsername(userId);
+        SecurityContextHolder.getContext().setAuthentication(new CustomAuthenticationToken(userDetails, userDetails.getAuthorities()));
+    }
 }

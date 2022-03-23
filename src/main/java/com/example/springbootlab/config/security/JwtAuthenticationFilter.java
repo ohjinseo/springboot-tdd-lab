@@ -37,9 +37,10 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             return token != null && tokenService.validateAccessToken(token);
         }
 
+        // 토큰으로부터 찾은 사용자를 securityContext
         private void setAccessAuthentication(String token){
             String userId = tokenService.extractAccessTokenSubject(token);
             CustomUserDetails userDetails = userDetailsService.loadUserByUsername(userId);
             SecurityContextHolder.getContext().setAuthentication(new CustomAuthenticationToken(userDetails, userDetails.getAuthorities()));
-    }
+        }
 }

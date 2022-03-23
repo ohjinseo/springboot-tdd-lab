@@ -5,7 +5,6 @@ import com.example.springbootlab.config.security.CustomAuthenticationEntryPoint;
 import com.example.springbootlab.config.security.CustomUserDetailsService;
 import com.example.springbootlab.config.security.JwtAuthenticationFilter;
 import com.example.springbootlab.config.token.TokenHelper;
-import com.example.springbootlab.service.sign.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;

@@ -25,7 +25,7 @@ public class CategoryService {
 
     @Transactional
     public void create(CategoryCreateRequest req) {
-        //categoryRepository.save(CategoryCreateRequest.toEntity(req, categoryRepository));
+        categoryRepository.save(CategoryCreateRequest.toEntity(req, categoryRepository));
     }
 
     @Transactional

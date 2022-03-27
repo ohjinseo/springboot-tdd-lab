@@ -30,6 +30,5 @@ public class CustomUserDetailsService implements UserDetailsService {
                         .map(roleType -> roleType.toString())
                         .map(SimpleGrantedAuthority::new).collect(Collectors.toSet())
         );
-
     }
 }

@@ -14,7 +14,7 @@ import javax.persistence.*;
 * 단지 cascade remove로 연쇄적 삭제하기 위해 새로운 의존 관계를 만들어줘야 된다는 것이다.
 *
 * 양방향 의존 관계를 무분별하게 설정하면, @ToString이나 @EqualsAndHashCode 등 서로를 계속 참조하며, 스택오버플로우가 발생하는 문제가 발생한다.
-* 이러한 점에서 @OnDelete 방식이 우위를 점한다.
+* 이러한 점에서 @OnDelete 방식이 우위를 점한다. (굳이 OneToMany 설정이 불필요)
 *
 * 또한 onDelete 방식은 JPA에서 단일 DELETE 쿼리만 전송하여 참조 레코드들을 연쇄적으로 제거해주는 반면,
 * cascade remove방식은 JPA에서 FK를 통해 참조하는 레코드들을 제거하기 위해 그 개수만큼 DELETE 쿼리를 전송해야한다.

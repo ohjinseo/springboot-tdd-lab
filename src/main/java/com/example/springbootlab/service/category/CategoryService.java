@@ -17,6 +17,7 @@ import java.util.List;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
 
+
     // 플랫한 구조의 카테고리를 계층형 구조로 변환
     public List<CategoryDto> readAll() {
         List<Category> categories = categoryRepository.findAllOrderByParentIdAscNullsFirstCategoryIdAsc();
@@ -30,11 +31,8 @@ public class CategoryService {
 
     @Transactional
     public void delete(Long id) {
-        if(notExistsCategory(id)) throw new CategoryNotFoundException();
-        categoryRepository.deleteById(id);
-    }
-
-    private boolean notExistsCategory(Long id) {
-        return !categoryRepository.existsById(id);
+        // bug fix : existsById + delteById에 의해 select 쿼리가 2개 날아감 -> 쿼리 1개만 날아가도록 수정
+        Category category = categoryRepository.findById(id).orElseThrow(CategoryNotFoundException::new);
+        categoryRepository.delete(category);
     }
 }

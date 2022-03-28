@@ -1,5 +1,7 @@
 package com.example.springbootlab;
 
+import com.example.springbootlab.domain.category.Category;
+import com.example.springbootlab.domain.category.CategoryRepository;
 import com.example.springbootlab.domain.member.*;
 import com.example.springbootlab.exception.RoleNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ public class InitDB {
     private final RoleRepository roleRepository;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CategoryRepository categoryRepository;
 
     // PostConstruct에서는 @Transactional과 같은 AOP가 적용되지 않는다.
     @EventListener(ApplicationReadyEvent.class)
@@ -33,6 +36,7 @@ public class InitDB {
         initRole();
         initTestAdmin();
         initTestMember();
+        initCategory();
     }
 
     private void initRole() {
@@ -64,5 +68,16 @@ public class InitDB {
                                 List.of(roleRepository.findByRoleType(RoleType.ROLE_NORMAL).orElseThrow(RoleNotFoundException::new)))
                 )
         );
+    }
+
+    private void initCategory() {
+        Category c1 = categoryRepository.save(new Category("category1", null));
+        Category c2 = categoryRepository.save(new Category("category2", c1));
+        Category c3 = categoryRepository.save(new Category("category3", c1));
+        Category c4 = categoryRepository.save(new Category("category4", c2));
+        Category c5 = categoryRepository.save(new Category("category5", c2));
+        Category c6 = categoryRepository.save(new Category("category6", c4));
+        Category c7 = categoryRepository.save(new Category("category7", c3));
+        Category c8 = categoryRepository.save(new Category("category8", null));
     }
 }

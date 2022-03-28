@@ -1,5 +1,6 @@
 package com.example.springbootlab.service.member;
 
+import com.example.springbootlab.domain.member.Member;
 import com.example.springbootlab.domain.member.MemberRepository;
 import com.example.springbootlab.dto.member.MemberDto;
 import com.example.springbootlab.exception.MemberNotFoundException;
@@ -18,11 +19,7 @@ public class MemberService {
     }
 
     public void delete(Long id){
-        if(notExistsMember(id)) throw new MemberNotFoundException();
-        memberRepository.deleteById(id);
-    }
-
-    private boolean notExistsMember(Long id){
-        return !memberRepository.existsById(id);
+        Member member = memberRepository.findById(id).orElseThrow(MemberNotFoundException::new);
+        memberRepository.delete(member);
     }
 }

@@ -34,7 +34,7 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
 
-    // 연관관계 주인이 아닌 테이블에서 컬럼이 생성?
+    // 연관관계 주인이 아닌 테이블에서 컬럼이 생성? -> 해결
     // OneToMany default : LAZY
     @OneToMany(mappedBy = "member", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<MemberRole> roles;

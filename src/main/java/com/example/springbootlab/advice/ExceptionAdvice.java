@@ -4,6 +4,7 @@ import com.example.springbootlab.controller.response.Response;
 import com.example.springbootlab.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -35,9 +36,9 @@ public class ExceptionAdvice {
         return Response.failure(-1002, "접근이 거부되었습니다.");
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler(BindException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Response methodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public Response bindException(BindException e) {
         // 요청 객체의 validation을 수행할 때, 해당 예외 발생
         // 각 검증 어노테이션 별로 지정했던 메시지 응답
         return Response.failure(-1003, e.getBindingResult().getFieldError().getDefaultMessage());
@@ -91,4 +92,12 @@ public class ExceptionAdvice {
         log.info("e = {}", e.getMessage());
         return Response.failure(-1011, "중첩 구조 변환에 실패하였습니다.");
     }
+
+    @ExceptionHandler(FileUploadFailureException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response fileUploadFailureException(FileUploadFailureException e) {
+        log.info("e={}", e.getMessage());
+        return Response.failure(-1014, "파일 업로드에 실패하였습니다.");
+    }
+
 }

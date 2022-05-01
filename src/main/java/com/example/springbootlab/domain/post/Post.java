@@ -33,15 +33,16 @@ public class Post {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id",nullable = false)
-    @OnDelete(action= OnDeleteAction.CASCADE) // 작성자가 삭제된다면 게시글 또한 제거
+    @OnDelete(action = OnDeleteAction.CASCADE) // 작성자가 삭제된다면 게시글 또한 제거
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OnDelete(action = OnDeleteAction.CASCADE) // 카테고리가 삭제된다면 게시글 또한 제거
     private Category category;
 
     // 게시글이 처음 저장될 때, 게시글에 등록된 이미지들도 같이 저장되야 하므로 PERSIST로 설정
+    // Image는 고아 객체가 되면, DB에서 삭제
     @OneToMany(mappedBy = "post", cascade=CascadeType.PERSIST, orphanRemoval = true)
     private List<Image> images;
 

@@ -20,16 +20,17 @@ public class Image {
     private Long id;
 
     @Column(nullable = false)
-    private String uniqueName;
+    private String uniqueName; // 이미지 구분을 위해 고유 이름 부여
 
     @Column(nullable = false)
-    private String originName;
+    private String originName; // 원래 이미지 이름
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OnDelete(action = OnDeleteAction.CASCADE) // 게시글이 제거되면 이미지도 연쇄적으로 제거
     private Post post;
 
+    // FileService나 PostService에서 지원할 수 있는 타입을 검사할 수 있지만 이는 본연의 임무가 아니므로 도메인 단에서 검사
     private final static String supportedExtension[] = {
             "jpg",
             "jpeg",
@@ -56,7 +57,8 @@ public class Image {
     private String extractExtension(String originName) {
         try {
             String ext = originName.substring(originName.lastIndexOf(".") + 1);
-            if (isSupportedFormat(ext)) return ext;
+            if (isSupportedFormat(ext)) // 만약 지원하는 이미지 타입이라면
+                return ext;
         } catch (StringIndexOutOfBoundsException e) {}
         throw new UnSupportedImageFormatException();
     }

@@ -121,7 +121,7 @@ class PostRepositoryTest {
     @Transactional
     void deleteCascadeByCategoryTest() {
         // given
-        postRepository.save(createPostWithImages(member, category, List.of(createImage(), createImage())));
+        postRepository.save(createPostWithImages(member, category, List.of(createImage(), createImage()))); // post 저장
         clear();
 
         // when

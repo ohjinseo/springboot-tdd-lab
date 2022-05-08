@@ -1,5 +1,6 @@
 package com.example.springbootlab.controller.post;
 
+import com.example.springbootlab.aop.AssignMemberId;
 import com.example.springbootlab.controller.response.Response;
 import com.example.springbootlab.dto.post.PostCreateRequest;
 import com.example.springbootlab.service.post.PostService;
@@ -25,6 +26,7 @@ public class PostController {
     @ApiOperation(value = "게시글 작성", notes = "게시글을 생성한다.")
     @PostMapping("/api/posts")
     @ResponseStatus(HttpStatus.CREATED)
+    @AssignMemberId
     public Response create(@Valid @ModelAttribute PostCreateRequest req) { 
         // 이미지 같은 경우 Content-Type이 multipart/form-data를 이용하므로 ModelAttribute 사용
         // 만약 ModelAttribute에서 validation이 위배되면 BindException 예외 발생

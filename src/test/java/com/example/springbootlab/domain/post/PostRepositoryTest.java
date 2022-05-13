@@ -48,6 +48,19 @@ class PostRepositoryTest {
     }
 
     @Test
+    void findByIdWithMemberTest() {
+        // given
+        Post post = postRepository.save(createPost(member, category));
+
+        // when
+        Post foundPost = postRepository.findByIdWithMember(post.getId()).orElseThrow(PostNotFoundException::new);
+
+        // then
+        Member foundMember = foundPost.getMember();
+        assertThat(foundMember.getEmail()).isEqualTo(member.getEmail());
+    }
+
+    @Test
     void createAndReadTest() {
         // given
         Post post = postRepository.save(createPost(member, category));

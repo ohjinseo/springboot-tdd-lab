@@ -2,12 +2,14 @@ package com.example.springbootlab.service.file;
 
 import com.example.springbootlab.exception.FileUploadFailureException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 
+@Service
 public class LocalFileService implements FileService {
 
     @Value("${upload.image.location}")

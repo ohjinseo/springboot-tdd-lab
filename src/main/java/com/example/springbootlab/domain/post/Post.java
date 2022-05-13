@@ -1,5 +1,6 @@
 package com.example.springbootlab.domain.post;
 
+import com.example.springbootlab.domain.BaseTimeEntity;
 import com.example.springbootlab.domain.category.Category;
 import com.example.springbootlab.domain.member.Member;
 import lombok.AccessLevel;
@@ -16,7 +17,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Post {
+public class Post extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

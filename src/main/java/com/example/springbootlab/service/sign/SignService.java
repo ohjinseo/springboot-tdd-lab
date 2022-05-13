@@ -1,18 +1,18 @@
 package com.example.springbootlab.service.sign;
 
-import com.example.springbootlab.config.token.TokenHelper;
-import com.example.springbootlab.domain.member.*;
-import com.example.springbootlab.dto.sign.RefreshTokenResponse;
-import com.example.springbootlab.dto.sign.SignInRequest;
-import com.example.springbootlab.dto.sign.SignInResponse;
-import com.example.springbootlab.dto.sign.SignUpRequest;
-import com.example.springbootlab.exception.*;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+        import com.example.springbootlab.config.token.TokenHelper;
+        import com.example.springbootlab.domain.member.*;
+        import com.example.springbootlab.dto.sign.RefreshTokenResponse;
+        import com.example.springbootlab.dto.sign.SignInRequest;
+        import com.example.springbootlab.dto.sign.SignInResponse;
+        import com.example.springbootlab.dto.sign.SignUpRequest;
+        import com.example.springbootlab.exception.*;
+        import lombok.RequiredArgsConstructor;
+        import org.springframework.security.crypto.password.PasswordEncoder;
+        import org.springframework.stereotype.Service;
+        import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+        import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -48,19 +48,19 @@ public class SignService {
     // 만약 Member 본인이 알게되면 MemberRepository, PasswordEncoder 등 알아야 할 내용이 너무 많아짐
     // 객체는 자신이 할 수 있는 일만 하면 되고, 자신이 알아야하는 내용만 알면됨
     // Member에 의존성을 추가하여 너무 많은 정보를 알게 하는 것은 좋은 방법이 아님
-   private void validatePassword(SignInRequest req, Member member){
+    private void validatePassword(SignInRequest req, Member member){
         if(!passwordEncoder.matches(req.getPassword(), member.getPassword())){
             throw new LoginFailureException();
         }
     }
-    
+
     private String createSubject(Member member){
         return String.valueOf(member.getId());
     }
 
     private void validateSignUpInfo(SignUpRequest req){
         if(memberRepository.existsByEmail(req.getEmail())){
-           throw new MemberEmailAlreadyExistsException(req.getEmail());
+            throw new MemberEmailAlreadyExistsException(req.getEmail());
         }
         if(memberRepository.existsByNickname(req.getNickname())){
             throw new MemberNicknameAlreadyExistsException(req.getNickname());

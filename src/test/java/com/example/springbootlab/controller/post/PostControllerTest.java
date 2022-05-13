@@ -14,7 +14,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.multipart.MultipartFile;
-
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import java.util.List;
 
 import static com.example.springbootlab.factory.dto.PostCreateRequestFactory.createPostCreateRequestWithImages;
@@ -73,4 +73,29 @@ class PostControllerTest {
         assertThat(capturedRequest.getImages().size()).isEqualTo(2);
     }
 
+    @Test
+    void readTest() throws Exception {
+        // given
+        Long id = 1L;
+
+        // when, then
+        mockMvc.perform(
+                get("/api/posts/{id}", id)
+        ).andExpect(status().isOk());
+
+        verify(postService).read(id);
+    }
+
+    @Test
+    void deleteTest() throws Exception{
+        // given
+        Long id = 1L;
+
+        // when, then
+        mockMvc.perform(
+                delete("/api/posts/{id}", id)
+        ).andExpect(status().isOk());
+
+        verify(postService).delete(id);
+    }
 }

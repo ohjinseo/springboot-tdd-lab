@@ -3,6 +3,7 @@ package com.example.springbootlab.controller.post;
 import com.example.springbootlab.advice.ExceptionAdvice;
 import com.example.springbootlab.dto.post.PostCreateRequest;
 import com.example.springbootlab.exception.MemberNotFoundException;
+import com.example.springbootlab.exception.PostNotFoundException;
 import com.example.springbootlab.service.post.PostService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,8 +18,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static com.example.springbootlab.factory.dto.PostCreateRequestFactory.createPostCreateRequest;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -59,5 +62,29 @@ public class PostControllerAdviceTest {
                             return requestPostProcessor;
                         })
                         .contentType(MediaType.MULTIPART_FORM_DATA));
+    }
+
+    @Test
+    void readExceptionByPostNotFoundTest() throws Exception {
+        // given
+        given(postService.read(anyLong())).willThrow(PostNotFoundException.class);
+
+        // when, then
+        mockMvc.perform(
+                        get("/api/posts/{id}", 1L)
+                ).andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value(-1012));
+    }
+
+    @Test
+    void deleteExceptionByPostNotFoundTest() throws Exception{
+        // given
+        doThrow(PostNotFoundException.class).when(postService).delete(anyLong());
+
+        // when, then
+        mockMvc.perform(
+                        delete("/api/posts/{id}", 1L)
+                ).andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value(-1012));
     }
 }

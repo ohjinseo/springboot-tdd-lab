@@ -2,10 +2,13 @@ package com.example.springbootlab.service.post;
 
 import com.example.springbootlab.domain.category.CategoryRepository;
 import com.example.springbootlab.domain.member.MemberRepository;
+import com.example.springbootlab.domain.post.Post;
 import com.example.springbootlab.domain.post.PostRepository;
 import com.example.springbootlab.dto.post.PostCreateRequest;
+import com.example.springbootlab.dto.post.PostDto;
 import com.example.springbootlab.exception.CategoryNotFoundException;
 import com.example.springbootlab.exception.MemberNotFoundException;
+import com.example.springbootlab.exception.PostNotFoundException;
 import com.example.springbootlab.exception.UnSupportedImageFormatException;
 import com.example.springbootlab.service.file.FileService;
 import org.junit.jupiter.api.Test;
@@ -27,6 +30,7 @@ import static com.example.springbootlab.factory.entity.CategoryFactory.createCat
 import static com.example.springbootlab.factory.entity.ImageFactory.createImage;
 import static com.example.springbootlab.factory.entity.MemberFactory.createMember;
 import static com.example.springbootlab.factory.entity.PostFactory.createPostWithImages;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -95,5 +99,28 @@ class PostServiceTest {
 
         // when, then
         assertThatThrownBy(() -> postService.create(req)).isInstanceOf(UnSupportedImageFormatException.class);
+    }
+
+    @Test
+    void readTest() {
+        // given
+        Post post = createPostWithImages(List.of(createImage(), createImage()));
+        given(postRepository.findById(anyLong())).willReturn(Optional.of(post));
+
+        // when
+        PostDto postDto = postService.read(1L);
+
+        // then
+        assertThat(postDto.getTitle()).isEqualTo(post.getTitle());
+        assertThat(postDto.getImages().size()).isEqualTo(post.getImages().size());
+    }
+
+    @Test
+    void readExceptionByPostNotFoundTest() {
+        // given
+        given(postRepository.findById(anyLong())).willReturn(Optional.ofNullable(null));
+
+        // when, then
+        assertThatThrownBy(() -> postService.read(1L)).isInstanceOf(PostNotFoundException.class);
     }
 }

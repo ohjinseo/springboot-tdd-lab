@@ -7,6 +7,8 @@ import com.example.springbootlab.domain.post.Post;
 import com.example.springbootlab.domain.post.PostRepository;
 import com.example.springbootlab.dto.post.PostCreateRequest;
 import com.example.springbootlab.dto.post.PostCreateResponse;
+import com.example.springbootlab.dto.post.PostDto;
+import com.example.springbootlab.exception.PostNotFoundException;
 import com.example.springbootlab.service.file.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import java.util.stream.IntStream;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class PostService {
+
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
@@ -37,6 +40,10 @@ public class PostService {
 
         uploadImage(post.getImages(), req.getImages());
         return new PostCreateResponse(post.getId());
+    }
+
+    public PostDto read(Long id) {
+        return PostDto.toDto(postRepository.findById(id).orElseThrow(PostNotFoundException::new));
     }
 
     private void uploadImage(List<Image> images, List<MultipartFile> fileImages) {

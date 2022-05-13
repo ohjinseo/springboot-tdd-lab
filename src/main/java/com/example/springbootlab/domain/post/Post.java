@@ -3,11 +3,14 @@ package com.example.springbootlab.domain.post;
 import com.example.springbootlab.domain.BaseTimeEntity;
 import com.example.springbootlab.domain.category.Category;
 import com.example.springbootlab.domain.member.Member;
+import com.example.springbootlab.dto.post.PostUpdateRequest;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.awt.*;
@@ -63,4 +66,13 @@ public class Post extends BaseTimeEntity {
             i.initPost(this);
         });
     }
+
+    @Getter
+    @AllArgsConstructor
+    public static class ImageUpdatedResult { // Client에게 전달될 이미지 업뎃 결과
+        private List<MultipartFile> addedImagesFiles;
+        private List<Image> addedImages;
+        private List<Image> deletedImages;
+    }
+
 }
